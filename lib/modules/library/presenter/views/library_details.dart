@@ -4,12 +4,14 @@ import 'package:intl/intl.dart';
 import 'package:mylibraryapp/modules/library/presenter/provider/library_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:slide_action/slide_action.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_strings.dart';
 import '../../../../../core/utils/utils.dart';
 import '../../../../../core/widgets/common_widgets/custom_text.dart';
 import '../../../../../core/widgets/common_widgets/custom_text_field.dart';
 import '../../../../../models/seat_booking_model.dart';
+import '../../../../core/constants/app_colors.dart';
 import '../../../authentication/presenter/provider/auth_provider.dart';
 
 class LibraryDetails extends StatefulWidget {
@@ -434,6 +436,8 @@ void showStudentDetailsBottomSheet({
                   ],
                 ),
               ),
+
+
               
               Visibility(
                 visible: !isPaid,
@@ -456,7 +460,60 @@ void showStudentDetailsBottomSheet({
            index!=null
                ? _infoRow(Icons.timer, "Payment ${AppStrings.timing}", convertDate(dateString: libraryProvider.studentFeesDataList[index]["created_at"],timing: true))
                : SizedBox(),
-        ],
+         SizedBox(height: 5.h,),
+         Visibility(
+           visible: !isPaid,
+           child: SlideAction(
+                   action: () async{
+           await libraryProvider.updateStudentFeeStatus(studentId: libraryProvider.singleStudentData["id"], status: "Paid");
+           libraryProvider.fetchStudentFeeData(libraryId: libraryProvider.singleStudentData["library_id"]);
+           Utils.navigateBack();
+           },
+               trackBuilder: (context, state) {
+                 return Container(
+                   height: 60.h,
+                   decoration: BoxDecoration(
+            color: AppColors.primaryRed.withOpacity(.9),
+            borderRadius: BorderRadius.circular(30),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 4,
+                offset: Offset(0, 2),
+              )
+            ],
+                   ),
+                   alignment: Alignment.center,
+                   child: CustomText(
+            text:
+            "SLIDE TO CONFIRM PAYMENT",
+              color: Colors.white,
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w600,
+
+                   ),
+                 );
+               },
+               thumbBuilder: (context, state) {
+                 return Container(
+                   margin: EdgeInsets.all(2.r),
+                   decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: AppColors.white,
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.lightGrey!,
+                blurRadius: 2,
+                offset: Offset(0, 1),
+              ),
+            ],
+                   ),
+                   child: Icon(Icons.arrow_forward, color: AppColors.primaryRed),
+                 );
+               },
+             ),
+         )
+      ],
       ),
     ),
   );

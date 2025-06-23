@@ -387,6 +387,26 @@ class LibraryProvider extends ChangeNotifier{
 
 
 
+  Future<void> updateStudentFeeStatus({required String studentId, required String status}) async{
+    try{
+       final response = await supabaseClient.from("student_fees_status").update({
+         "status": status
+        }).eq("student_id", studentId).select();
+
+       if(response!=null && response.isNotEmpty){
+         debugPrint("Student fees status updated successfully");
+       }else{
+         debugPrint("Student fees status updated failed");
+       }
+      
+    }catch (ex){
+      debugPrint("Exception occurred while updating student fees status $ex");
+    }finally{
+
+      notifyListeners();
+    }
+  }
+
 
 
 }
